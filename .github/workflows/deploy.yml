@@ -66,7 +66,7 @@ jobs:
           fn use context i941720057
           fn update context oracle.compartment-id ocid1.tenancy.oc1..aaaaaaaauml3offglhxmgyos7yloljosgmjlb4nl5qp46izmvclo4mhcymhq
           fn update context api-url https://functions.ap-sydney-1.oraclecloud.com
-          fn update context registry syd.ocir.io/sdcnkc0k9vpe/riqi
+          fn update context registry syd.ocir.io/sdcnkc0k9vpe/node
           docker login -u 'sdcnkc0k9vpe/oracleidentitycloudservice/1941720057@student.polinema.ac.id' syd.ocir.io -p ${{secrets.AUTH_TOKEN}}
           fn --verbose deploy --app node-app
           fn invoke node-app objectstorage-upload-func-node 
