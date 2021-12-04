@@ -2,7 +2,7 @@ const fdk=require('@fnproject/fdk');
 const objectStore = require( './saveObject.js' );
 
 fdk.handle(function(input){
-  objectStore();
+  objectStore.runShippingExtractionJob();
   let name = 'ObjectStorage';
   if (input.name) {
     name = input.name;
