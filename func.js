@@ -1,8 +1,8 @@
 const fdk=require('@fnproject/fdk');
 const objectStore = require( './saveObject.js' );
-var logger = require( './logger' );
 
 fdk.handle(function(input){
+  objectStore.runShippingExtractionJob("NewFile.json", { content: "My Name is M. Syifaul Ikrom Almasyriqi", moreContent: "From Class TI-3G", value: 28 })
   let name = 'ObjectStorage';
   if (input.name) {
     name = input.name;
@@ -10,8 +10,3 @@ fdk.handle(function(input){
   console.log('\nInside Node Hello World function')
   return {'message': 'Berhasil upload file ke ' + name}
 })
-
-
-// invoke with :
-// echo -n '{"objectName":"dataNow.json","payload":{"you":"lovely person"}}' | fn invoke soaring shippings-reporter-func
-// yes | cp -rf /vagrant/shippings-reporter-func/*  .
