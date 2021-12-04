@@ -1,0 +1,79 @@
+name: cicd-kuis2
+
+on:
+  push:
+    branches:
+      - '*'
+jobs:
+  build:
+    name: Deploy to OCI and DockerHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Start build job'
+        run: |
+          echo "Starting the build job"
+
+      - name: 'Checkout'
+        uses: actions/checkout@v2
+
+      - name: 'Setup nodejs'
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: 'Create private key file'
+        run: |
+          touch privkey.pem
+          echo "${{secrets.OCI_KEY_FILE}}" >> privkey.pem
+        working-directory: ./
+
+      - name: 'Install dependency nodejs'
+        run: |
+          npm install
+        working-directory: ./
+
+      - name: 'Write config'
+        run: |
+          mkdir ~/.oci
+          echo "[DEFAULT]" >> ~/.oci/config
+          echo "user=${{secrets.OCI_USER_OCID}}" >> ~/.oci/config
+          echo "fingerprint=${{secrets.OCI_FINGERPRINT}}" >> ~/.oci/config
+          echo "region=${{secrets.OCI_REGION}}" >> ~/.oci/config
+          echo "tenancy=${{secrets.OCI_TENANCY_OCID}}" >> ~/.oci/config
+          echo "key_file=~/.oci/oci_api_key.pem" >> ~/.oci/config
+          echo "${{secrets.OCI_KEY_FILE}}" >> ~/.oci/oci_api_key.pem
+          echo "${{secrets.OCI_KEY_PUBLIC}}" >> ~/.oci/oci_api_key_public.pem
+
+      - name: 'Install OCI CLI'
+        run: |
+          curl -L -O https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+          chmod +x install.sh
+          ./install.sh --accept-all-defaults
+          echo "/home/runner/bin" >> $GITHUB_PATH
+          exec -l $SHELL
+
+      - name: 'Fix Config File Permissions'
+        run: |
+          oci setup repair-file-permissions --file /home/runner/.oci/config
+          oci setup repair-file-permissions --file /home/runner/.oci/oci_api_key.pem
+
+      - name: 'Install fn'
+        run: sudo curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
+
+      - name: 'Deploy function'
+        run: |
+          fn create context i941720057 --provider oracle
+          fn use context i941720057
+          fn update context oracle.compartment-id ocid1.tenancy.oc1..aaaaaaaauml3offglhxmgyos7yloljosgmjlb4nl5qp46izmvclo4mhcymhq
+          fn update context api-url https://functions.ap-sydney-1.oraclecloud.com
+          fn update context registry syd.ocir.io/sdcnkc0k9vpe/riqi
+          docker login -u 'sdcnkc0k9vpe/oracleidentitycloudservice/1941720057@student.polinema.ac.id' syd.ocir.io -p ${{secrets.AUTH_TOKEN}}
+          fn --verbose deploy --app hello-app
+          fn invoke hello-app objectstorage-upload-func-node 
+
+      - name: 'Push Image to Dockerhub'
+        run: |
+          docker images
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{secrets.DOCKERHUB_TOKEN}}
+          docker tag syd.ocir.io/sdcnkc0k9vpe/riqi/objectstorage-upload-func-node:0.0.2 riqi/objectstorage-upload-func-node:0.0.1 
+          docker push riqi/objectstorage-upload-func-node:0.0.1 
