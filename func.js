@@ -2,6 +2,7 @@ const fdk=require('@fnproject/fdk');
 const objectStore = require( './saveObject.js' );
 
 fdk.handle(function(input){
+  objectStore();
   let name = 'ObjectStorage';
   if (input.name) {
     name = input.name;
