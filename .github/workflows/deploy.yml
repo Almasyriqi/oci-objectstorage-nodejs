@@ -60,7 +60,7 @@ jobs:
       - name: 'Install fn'
         run: sudo curl -LSs https://raw.githubusercontent.com/fnproject/cli/master/install | sh
 
-      - name: 'Deploy function'
+      - name: 'Deploy and invoke function'
         run: |
           fn create context i941720057 --provider oracle
           fn use context i941720057
@@ -68,8 +68,8 @@ jobs:
           fn update context api-url https://functions.ap-sydney-1.oraclecloud.com
           fn update context registry syd.ocir.io/sdcnkc0k9vpe/riqi
           docker login -u 'sdcnkc0k9vpe/oracleidentitycloudservice/1941720057@student.polinema.ac.id' syd.ocir.io -p ${{secrets.AUTH_TOKEN}}
-          fn --verbose deploy --app hello-app
-          fn invoke hello-app objectstorage-upload-func-node 
+          fn --verbose deploy --app node-app
+          fn invoke node-app objectstorage-upload-func-node 
 
       - name: 'Push Image to Dockerhub'
         run: |
