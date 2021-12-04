@@ -49,4 +49,4 @@ module.exports = {
 }
 
 // test call
-runShippingExtractionJob("BrandNewFile.json", { content: "My Name is M. Syifaul Ikrom Almasyriqi", moreContent: "From Class TI-3G", value: 20 })
+runShippingExtractionJob("NewFile.json", { content: "My Name is M. Syifaul Ikrom Almasyriqi", moreContent: "From Class TI-3G", value: 21 })
