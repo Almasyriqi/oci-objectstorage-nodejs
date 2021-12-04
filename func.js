@@ -3,7 +3,7 @@ const objectStore = require( './saveObject.js' );
 var logger = require( './logger' );
 
 fdk.handle(function(){
-  logger.log('info',`objectstorage-upload-func-node for ${JSON.stringify()}`)
+  console.log('Berhasil upload file');
 })
 
 
