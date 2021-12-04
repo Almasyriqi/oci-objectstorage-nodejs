@@ -75,5 +75,5 @@ jobs:
         run: |
           docker images
           docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{secrets.DOCKERHUB_TOKEN}}
-          docker tag syd.ocir.io/sdcnkc0k9vpe/riqi/objectstorage-upload-func-node:0.0.2 riqi/objectstorage-upload-func-node:0.0.1 
+          docker tag syd.ocir.io/sdcnkc0k9vpe/node/objectstorage-upload-func-node:0.0.2 riqi/objectstorage-upload-func-node:0.0.1 
           docker push riqi/objectstorage-upload-func-node:0.0.1 
